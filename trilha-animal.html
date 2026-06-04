@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trilha Animal — Controle de Mastite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --g9: #1a3528;
+  --g8: #1e4030;
+  --g7: #245038;
+  --g6: #2d6647;
+  --g5: #3a7d56;
+  --g4: #4d9e6e;
+  --g3: #72bf91;
+  --g2: #a8dbb8;
+  --g1: #d4f0de;
+  --g0: #edf8f1;
+  --cream: #f5f2eb;
+  --card: #ffffff;
+  --border: #dde8e1;
+  --txt: #182c1f;
+  --txt2: #5a7266;
+  --txt3: #9db5a5;
+  --amber: #e8a020;
+  --amber-bg: #fff9ed;
+  --amber-b: #f5d98a;
+  --red: #d94040;
+  --red-bg: #fff2f2;
+  --red-b: #f5b8b8;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 2px 12px rgba(26,53,40,.07);
+  --shadow-lg: 0 8px 32px rgba(26,53,40,.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Garante ícones Tabler sempre inline e sem quebra de layout */
+i[class^="ti"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--txt);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ── */
+.app { display: flex; flex-direction: column; min-height: 100vh; max-width: 480px; margin: 0 auto; background: var(--cream); }
+
+/* ── SCREENS ── */
+.screen { display: none; flex-direction: column; flex: 1; animation: fadeIn .22s ease; }
+.screen.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--g9);
+  padding: 20px 20px 0;
+  flex-shrink: 0;
+  position: sticky; top: 0; z-index: 10;
+}
+.hdr-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.hdr-back {
+  background: rgba(255,255,255,.12); border: none;
+  width: 38px; height: 38px; border-radius: 50%;
+  color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.hdr-back svg { stroke: #fff; }
+.hdr-back:hover { background: rgba(255,255,255,.2); }
+.hdr-logo-sm { display: flex; align-items: center; gap: 8px; }
+.hdr-logo-sm span { font-size: 13px; font-weight: 800; color: rgba(255,255,255,.75); letter-spacing: 1px; }
+.hdr-title { font-size: 30px; font-weight: 900; color: #fff; line-height: 1.1; padding: 0 0 20px; }
+.hdr-wave { height: 24px; background: var(--cream); border-radius: 24px 24px 0 0; flex-shrink: 0; }
+
+/* ── BODY ── */
+.body { padding: 16px; flex: 1; }
+
+/* ── SPLASH ── */
+.splash {
+  background: var(--g9);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* círculos decorativos de fundo */
+.splash::before {
+  content: '';
+  position: absolute;
+  width: 420px; height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(61,122,86,.45) 0%, transparent 70%);
+  top: -80px; left: 50%; transform: translateX(-50%);
+  pointer-events: none;
+}
+.splash::after {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(77,158,110,.2) 0%, transparent 70%);
+  bottom: 120px; right: -60px;
+  pointer-events: none;
+}
+
+.splash-logo {
+  text-align: center;
+  padding-top: 52px;
+  position: relative; z-index: 1;
+}
+
+/* área da vaca — sem caixa, só o SVG flutuando */
+.splash-hero {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+  padding: 8px 0 0;
+}
+.splash-hero svg {
+  filter: drop-shadow(0 8px 32px rgba(0,0,0,.35));
+}
+
+/* cartão inferior arredondado */
+.splash-bottom {
+  width: 100%;
+  background: rgba(255,255,255,.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,.08);
+  border-radius: 32px 32px 0 0;
+  padding: 28px 28px 44px;
+  text-align: center;
+  position: relative; z-index: 1;
+}
+.splash-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(77,158,110,.25);
+  border: 1px solid rgba(77,158,110,.4);
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 11px; font-weight: 800; color: var(--g3);
+  letter-spacing: .8px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.splash-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+.splash-desc { font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.65; margin-bottom: 24px; }
+.splash-desc b { color: rgba(255,255,255,.9); font-weight: 800; }
+.dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 22px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.25); transition: all .3s; }
+.dot.on { background: #fff; width: 20px; border-radius: 3px; }
+.btn-start {
+  width: 100%; padding: 17px 24px;
+  background: linear-gradient(135deg, var(--g5) 0%, var(--g4) 100%);
+  border: none; border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800;
+  color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(58,125,86,.45);
+  transition: transform .15s, box-shadow .15s;
+}
+.btn-start:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(58,125,86,.55); }
+.btn-start .arrow {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── MENU CARDS ── */
+.menu-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px;
+  display: flex; align-items: center; gap: 16px;
+  cursor: pointer; margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  transition: transform .15s, box-shadow .15s;
+}
+.menu-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.menu-card:active { transform: scale(.98); }
+.mc-icon {
+  width: 54px; height: 54px; border-radius: 16px;
+  background: var(--g0);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.mc-icon svg { width: 28px; height: 28px; }
+.mc-text { flex: 1; }
+.mc-title { font-size: 16px; font-weight: 800; color: var(--txt); }
+.mc-desc { font-size: 13px; color: var(--txt2); margin-top: 2px; }
+.mc-chev { color: var(--txt3); font-size: 20px; }
+
+/* ── BOTTOM NAV ── */
+.bnav {
+  background: var(--g9);
+  padding: 10px 32px 20px;
+  display: flex; align-items: center; justify-content: space-around;
+  flex-shrink: 0;
+  position: sticky; bottom: 0;
+}
+.bnav-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; border: none; cursor: pointer; padding: 6px 16px;
+  border-radius: 14px; transition: background .15s;
+  min-width: 64px;
+}
+.bnav-btn:hover { background: rgba(255,255,255,.08); }
+.bnav-btn .bi {
+  color: rgba(255,255,255,.45); transition: color .15s;
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+}
+.bnav-btn .bi svg {
+  width: 24px; height: 24px;
+  stroke: rgba(255,255,255,.45); transition: stroke .15s;
+}
+.bnav-btn.on .bi svg { stroke: #fff; }
+.bnav-btn .bl { font-size: 11px; color: rgba(255,255,255,.45); font-family: 'Nunito', sans-serif; font-weight: 700; line-height: 1; }
+.bnav-btn.on .bi, .bnav-btn.on .bl { color: #fff; }
+.bnav-btn.on .bi svg { stroke: #fff; }
+.bnav-center {
+  width: 54px; height: 54px; border-radius: 50%;
+  background: var(--g5);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; margin-top: -26px;
+  border: 4px solid var(--g9);
+  color: #fff; flex-shrink: 0;
+  transition: background .15s, transform .15s;
+}
+.bnav-center svg {
+  width: 26px; height: 26px;
+  stroke: #fff;
+  display: block;
+}
+.bnav-center:hover { background: var(--g4); transform: scale(1.06); }
+
+/* ── FORM ── */
+.photo-zone {
+  background: var(--g9);
+  height: 160px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  position: relative;
+}
+.photo-circle {
+  width: 96px; height: 96px; border-radius: 50%;
+  border: 2.5px dashed rgba(255,255,255,.4);
+  background: rgba(255,255,255,.08);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; cursor: pointer;
+}
+.photo-preview { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none; }
+.photo-icon { display: flex; align-items: center; justify-content: center; }
+.photo-label { font-size: 12px; color: rgba(255,255,255,.55); font-weight: 700; }
+.photo-cam-badge {
+  position: absolute; bottom: 24px; right: calc(50% - 60px);
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--g5); border: 2.5px solid var(--g9);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 15px; cursor: pointer;
+}
+.field { margin-bottom: 15px; }
+.flabel {
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .6px; color: var(--txt2);
+  margin-bottom: 6px; display: flex; align-items: center; gap: 7px;
+}
+.flabel i { font-size: 16px; color: var(--g5); }
+.finput {
+  width: 100%; padding: 12px 15px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--txt);
+  background: #fff; outline: none; transition: border-color .15s;
+}
+.finput:focus { border-color: var(--g5); }
+.finput::placeholder { color: var(--txt3); }
+.fselect {
+  width: 100%; padding: 12px 15px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--txt);
+  background: #fff; outline: none; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a7266' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+.btn-primary {
+  width: 100%; padding: 17px;
+  background: var(--g9); border: none; border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; color: #fff;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: opacity .15s;
+}
+.btn-primary:hover { opacity: .9; }
+.btn-outline {
+  width: 100%; padding: 15px; margin-top: 10px;
+  background: transparent; border: 1.5px solid var(--border); border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; color: var(--txt2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s;
+}
+.btn-outline:hover { background: var(--g0); }
+
+/* ── SINTOMAS ── */
+.sym-intro { font-size: 13px; color: var(--txt2); font-weight: 600; margin-bottom: 16px; }
+.sym-item {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; margin-bottom: 10px;
+  transition: border-color .14s, background .14s;
+}
+.sym-item.sel { border-color: var(--g5); background: var(--g0); }
+.sym-item.warn { background: var(--amber-bg); border-color: var(--amber-b); }
+.sym-item.warn.sel { border-color: var(--amber); }
+.sym-emoji { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sym-emoji svg { width: 30px; height: 30px; }
+.sym-name { flex: 1; font-size: 14px; font-weight: 700; color: var(--txt); }
+.sym-check {
+  width: 24px; height: 24px; border-radius: 7px;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #fff; transition: all .14s;
+}
+.sym-item.sel .sym-check { background: var(--g6); border-color: var(--g6); }
+.sym-item.warn.sel .sym-check { background: var(--amber); border-color: var(--amber); }
+.sym-notes {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; color: var(--txt);
+  background: #fff; outline: none; resize: none; margin-top: 4px;
+}
+.sym-notes:focus { border-color: var(--g5); }
+.sym-animal-select {
+  background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 12px 15px; font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--txt);
+  width: 100%; outline: none; cursor: pointer; appearance: none; margin-bottom: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a7266' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+
+/* ── RELATÓRIO ── */
+.filter-sel {
+  width: 100%; padding: 13px 18px;
+  border: 1.5px solid var(--border); border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; color: var(--txt);
+  background: #fff; outline: none; cursor: pointer; appearance: none; margin-bottom: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231a3528' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 18px center;
+  box-shadow: var(--shadow);
+}
+.stat-card {
+  border-radius: var(--radius); padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; box-shadow: var(--shadow);
+}
+.sc-green { background: #e5f5ec; border: 1px solid #c0e3ce; }
+.sc-amber { background: var(--amber-bg); border: 1px solid var(--amber-b); }
+.sc-red { background: var(--red-bg); border: 1px solid var(--red-b); }
+.sc-left { display: flex; align-items: center; gap: 14px; }
+.sc-icon { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; }
+.sc-icon svg { width: 40px; height: 40px; }
+.sc-label { font-size: 13px; font-weight: 700; color: var(--txt2); }
+.sc-num { font-size: 42px; font-weight: 900; line-height: 1; }
+.sc-green .sc-num { color: #1e5c35; }
+.sc-amber .sc-num { color: #8a5e0a; }
+.sc-red .sc-num { color: var(--red); }
+.sc-trend svg { width: 68px; height: 40px; }
+
+/* ── ANIMAL CARDS ── */
+.anim-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 15px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 10px; box-shadow: var(--shadow);
+}
+.anim-avatar {
+  width: 50px; height: 50px; border-radius: 14px;
+  background: var(--g0); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+}
+.anim-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
+.anim-avatar svg { width: 30px; height: 30px; }
+.anim-info { flex: 1; min-width: 0; }
+.anim-name { font-size: 15px; font-weight: 800; color: var(--txt); }
+.anim-detail { font-size: 12px; color: var(--txt2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.anim-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.b-ok { background: #d6f0e0; color: #1a5c35; }
+.b-sus { background: #fff3cc; color: #7a4f00; }
+.b-trt { background: #ffe0e0; color: #8b1f1f; }
+
+/* ── REGISTRO DE SINTOMAS LISTADO ── */
+.sint-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 15px;
+  margin-bottom: 10px; box-shadow: var(--shadow);
+}
+.sint-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.sint-animal { font-size: 14px; font-weight: 800; color: var(--txt); }
+.sint-date { font-size: 12px; color: var(--txt3); }
+.sint-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+.sint-tag { background: var(--g0); color: var(--g6); border-radius: 8px; padding: 3px 10px; font-size: 11px; font-weight: 700; }
+.sint-tag.warn-tag { background: var(--amber-bg); color: #8a5e0a; }
+.sint-notes { font-size: 12px; color: var(--txt2); margin-top: 4px; font-style: italic; }
+
+/* ── UTILS ── */
+.sec-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .7px; color: var(--txt3); margin-bottom: 12px; }
+.empty-state {
+  text-align: center; padding: 48px 24px; color: var(--txt3);
+}
+.empty-state i { font-size: 48px; display: block; margin-bottom: 12px; opacity: .5; }
+.empty-state p { font-size: 14px; font-weight: 600; }
+.btn-icon {
+  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  transition: background .15s, transform .12s;
+}
+.btn-icon:active { transform: scale(.92); }
+.btn-del { background: var(--red-bg); color: var(--red); }
+.btn-del:hover { background: #ffd6d6; }
+.btn-edit { background: #e8f0ff; color: #3a5fc8; }
+.btn-edit:hover { background: #d0deff; }
+
+/* ── MODAL DE EDIÇÃO ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.45); backdrop-filter: blur(3px);
+  z-index: 200; align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; animation: slideUp .28s ease; }
+@keyframes slideUp { from { opacity:0; } to { opacity:1; } }
+.modal-sheet {
+  background: var(--cream); border-radius: 28px 28px 0 0;
+  width: 100%; max-width: 480px; max-height: 92vh;
+  display: flex; flex-direction: column;
+  animation: sheetUp .28s ease;
+}
+@keyframes sheetUp { from { transform: translateY(40px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+.modal-handle {
+  width: 40px; height: 4px; background: var(--border);
+  border-radius: 4px; margin: 14px auto 0;
+  flex-shrink: 0;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 12px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+.modal-title { font-size: 20px; font-weight: 900; color: var(--txt); }
+.modal-close {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--g0); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--txt2);
+  transition: background .15s;
+}
+.modal-close:hover { background: var(--border); }
+.modal-body { overflow-y: auto; padding: 16px 20px; flex: 1; }
+.modal-footer { padding: 12px 20px 28px; flex-shrink: 0; border-top: 1px solid var(--border); }
+
+/* foto edit */
+.edit-photo-zone {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 18px; padding: 14px;
+  background: var(--g0); border-radius: 14px;
+}
+.edit-photo-circle {
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 2px dashed var(--g3);
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; cursor: pointer; flex-shrink: 0;
+  transition: border-color .15s;
+}
+.edit-photo-circle:hover { border-color: var(--g5); }
+.edit-photo-circle img { width:100%; height:100%; object-fit:cover; border-radius:50%; display:none; }
+.edit-photo-info { flex: 1; }
+.edit-photo-info p { font-size: 13px; font-weight: 700; color: var(--txt2); margin-bottom: 4px; }
+.edit-photo-btn {
+  font-size: 12px; font-weight: 800; color: var(--g6);
+  background: none; border: 1px solid var(--g3); border-radius: 8px;
+  padding: 5px 12px; cursor: pointer; font-family: 'Nunito', sans-serif;
+  transition: background .15s;
+}
+.edit-photo-btn:hover { background: var(--g1); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(16px);
+  background: var(--g8); color: #fff;
+  padding: 13px 20px; border-radius: 50px;
+  font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+  opacity: 0; transition: all .28s; pointer-events: none; z-index: 100;
+  white-space: nowrap; box-shadow: var(--shadow-lg);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── ABOUT ── */
+.about-logo { display: flex; justify-content: center; padding: 24px 0 16px; }
+.about-body p { font-size: 14px; color: var(--txt2); line-height: 1.75; margin-bottom: 14px; }
+.about-tech { background: var(--g0); border-radius: 14px; padding: 16px 18px; }
+.about-tech-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: var(--g6); margin-bottom: 10px; }
+.about-tech-row { font-size: 13px; color: var(--txt2); margin-bottom: 5px; }
+.about-tech-row b { color: var(--g6); }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ════ SPLASH ════ -->
+  <div class="screen active" id="sc-splash">
+    <div class="splash">
+      <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Trilha Animal">
+        <circle cx="80" cy="80" r="76" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="6 4"/>
+        <circle cx="80" cy="80" r="66" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+        <g transform="translate(80,36)">
+          <ellipse cx="0" cy="0" rx="17" ry="11" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.45)" stroke-width="1.2"/>
+          <line x1="-11" y1="-2" x2="-17" y2="-9" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="11" y1="-2" x2="17" y2="-9" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" stroke-linecap="round"/>
+          <ellipse cx="-5" cy="4" rx="4" ry="5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.45)" stroke-width="1"/>
+          <ellipse cx="5" cy="4" rx="4" ry="5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.45)" stroke-width="1"/>
+          <ellipse cx="0" cy="9" rx="6" ry="3" fill="rgba(255,180,180,0.55)" stroke="rgba(255,255,255,0.35)" stroke-width=".8"/>
+        </g>
+        <text x="80" y="102" text-anchor="middle" font-family="Nunito,sans-serif" font-size="24" font-weight="900" fill="#ffffff" letter-spacing="3">TRILHA</text>
+        <text x="80" y="116" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12" font-weight="800" fill="#ffffff" letter-spacing="4.5">ANIMAL</text>
+        <text x="80" y="133" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" font-weight="600" fill="rgba(255,255,255,0.55)" letter-spacing=".8">PREVENÇÃO QUE FORTALECE O REBANHO</text>
+        <path d="M24 142 Q80 150 136 142" stroke="rgba(255,255,255,0.25)" stroke-width="1.2" fill="none"/>
+        <path d="M24 142 Q80 156 136 142" stroke="rgba(255,255,255,0.12)" stroke-width=".6" fill="none"/>
+        <circle cx="24" cy="142" r="2.5" fill="rgba(255,255,255,0.2)"/>
+        <circle cx="136" cy="142" r="2.5" fill="rgba(255,255,255,0.2)"/>
+      </svg>
+
+      <div class="splash-hero">
+        <svg width="260" height="260" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- brilho suave atrás -->
+          <ellipse cx="50" cy="54" rx="38" ry="34" fill="rgba(77,158,110,0.12)"/>
+          <!-- chifre esquerdo -->
+          <path d="M34 30 Q24 15 28 7 Q31 2 35 10 Q37 17 36 26" stroke="rgba(255,255,255,0.88)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- chifre direito -->
+          <path d="M66 30 Q76 15 72 7 Q69 2 65 10 Q63 17 64 26" stroke="rgba(255,255,255,0.88)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- orelha esquerda -->
+          <path d="M26 46 Q11 40 13 53 Q15 63 28 57" stroke="rgba(255,255,255,0.88)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- orelha direita -->
+          <path d="M74 46 Q89 40 87 53 Q85 63 72 57" stroke="rgba(255,255,255,0.88)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- cabeça -->
+          <path d="M34 30 Q21 33 23 47 Q25 57 28 57 Q30 65 34 71 Q41 80 50 82 Q59 80 66 71 Q70 65 72 57 Q75 57 77 47 Q79 33 66 30 Q59 24 50 22 Q41 24 34 30 Z" stroke="rgba(255,255,255,0.88)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- focinho -->
+          <path d="M38 71 Q50 77 62 71 Q64 65 50 63 Q36 65 38 71 Z" stroke="rgba(255,255,255,0.88)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- narina -->
+          <path d="M45 70 Q50 73 55 70" stroke="rgba(255,255,255,0.88)" stroke-width="1.9" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="splash-bottom">
+        <div class="splash-tag">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Saúde Animal
+        </div>
+        <div class="splash-title">Controle de<br>Mastite</div>
+        <div class="splash-desc">Monitore a saúde das suas vacas e previna a mastite de forma <b>simples e eficiente.</b></div>
+        <div class="dots"><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div>
+        <button class="btn-start" onclick="go('menu')">
+          <span>Começar agora</span>
+          <span class="arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MENU ════ -->
+  <div class="screen" id="sc-menu">
+    <div class="hdr">
+      <div class="hdr-top">
+        <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Trilha Animal">
+          <circle cx="22" cy="22" r="20" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.4)" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <circle cx="22" cy="22" r="16" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+          <g transform="translate(22,12)">
+            <ellipse cx="0" cy="0" rx="6" ry="4" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.4)" stroke-width=".9"/>
+            <line x1="-4" y1="-1" x2="-7" y2="-4" stroke="rgba(255,255,255,.4)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="4" y1="-1" x2="7" y2="-4" stroke="rgba(255,255,255,.4)" stroke-width="1.2" stroke-linecap="round"/>
+          </g>
+          <text x="22" y="27" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7.5" font-weight="900" fill="#fff" letter-spacing="1">TRILHA</text>
+          <text x="22" y="33" text-anchor="middle" font-family="Nunito,sans-serif" font-size="5" font-weight="700" fill="rgba(255,255,255,.65)" letter-spacing="1">ANIMAL</text>
+        </svg>
+        <button style="background:none;border:none;cursor:pointer;position:relative;" onclick="go('relatorios')" aria-label="Notificações">
+          <i class="ti ti-bell" style="font-size:26px;color:rgba(255,255,255,.8)"></i>
+          <span style="width:9px;height:9px;background:var(--amber);border-radius:50%;position:absolute;top:-1px;right:-1px;border:2px solid var(--g9);"></span>
+        </button>
+      </div>
+      <div class="hdr-title">Menu<br>Principal</div>
+    </div>
+    <div class="hdr-wave"></div>
+
+    <div class="body" style="padding-bottom:0;overflow-y:auto;flex:1;">
+      <div id="welcome-banner" style="background:var(--g9);border-radius:18px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+        <div style="flex:1">
+          <div style="font-size:12px;color:rgba(255,255,255,.6);font-weight:600">Olá,</div>
+          <div style="font-size:16px;font-weight:900;color:#fff">Administrador Master</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">Acesso total · MASTER</div>
+        </div>
+        <div style="width:48px;height:48px;background:var(--g5);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;">👨‍🌾</div>
+      </div>
+
+      <div class="sec-label" id="menu-stats-label">Carregando...</div>
+
+      <div class="menu-card" onclick="go('relatorios')">
+        <div class="mc-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="15" width="6" height="10" rx="1.5" fill="#2d6647"/>
+            <rect x="11" y="10" width="6" height="15" rx="1.5" fill="#2d6647"/>
+            <rect x="20" y="5" width="6" height="20" rx="1.5" fill="#2d6647"/>
+            <path d="M4 8 L13 5 L22 3" stroke="#72bf91" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="mc-text">
+          <div class="mc-title">Relatórios</div>
+          <div class="mc-desc">Veja os dados do seu rebanho</div>
+        </div>
+        <i class="ti ti-chevron-right mc-chev"></i>
+      </div>
+
+      <div class="menu-card" onclick="go('animais')">
+        <div class="mc-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="14" cy="14" rx="9" ry="8" stroke="#2d6647" stroke-width="1.8" fill="none"/>
+            <ellipse cx="10.5" cy="12" rx="3" ry="2.5" stroke="#2d6647" stroke-width="1.5" fill="none"/>
+            <ellipse cx="17.5" cy="12" rx="3" ry="2.5" stroke="#2d6647" stroke-width="1.5" fill="none"/>
+            <line x1="9" y1="9.5" x2="7" y2="6" stroke="#2d6647" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="19" y1="9.5" x2="21" y2="6" stroke="#2d6647" stroke-width="1.5" stroke-linecap="round"/>
+            <ellipse cx="14" cy="20" rx="6" ry="4" stroke="#2d6647" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="mc-text">
+          <div class="mc-title">Cadastrar vacas</div>
+          <div class="mc-desc">Cadastre e gerencie seus animais</div>
+        </div>
+        <i class="ti ti-chevron-right mc-chev"></i>
+      </div>
+
+      <div class="menu-card" onclick="go('sintomas')">
+        <div class="mc-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="3" width="18" height="22" rx="3.5" stroke="#2d6647" stroke-width="1.8" fill="none"/>
+            <line x1="9" y1="10" x2="19" y2="10" stroke="#2d6647" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="9" y1="14" x2="19" y2="14" stroke="#2d6647" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="9" y1="18" x2="15" y2="18" stroke="#2d6647" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="21" cy="21" r="5" fill="#2d6647"/>
+            <line x1="21" y1="18.5" x2="21" y2="23.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="18.5" y1="21" x2="23.5" y2="21" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="mc-text">
+          <div class="mc-title">Registrar sintomas</div>
+          <div class="mc-desc">Registre sintomas e suspeitas</div>
+        </div>
+        <i class="ti ti-chevron-right mc-chev"></i>
+      </div>
+
+      <div class="menu-card" onclick="go('historico')">
+        <div class="mc-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="14" cy="14" r="10" stroke="#2d6647" stroke-width="1.8" fill="none"/>
+            <polyline points="14,8 14,14 18,17" stroke="#2d6647" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="mc-text">
+          <div class="mc-title">Histórico de registros</div>
+          <div class="mc-desc">Todos os registros de sintomas</div>
+        </div>
+        <i class="ti ti-chevron-right mc-chev"></i>
+      </div>
+
+      <div class="menu-card" onclick="go('sobre')">
+        <div class="mc-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="14" cy="14" r="10" stroke="#2d6647" stroke-width="1.8" fill="none"/>
+            <line x1="14" y1="13" x2="14" y2="20" stroke="#2d6647" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="14" cy="9.5" r="1.5" fill="#2d6647"/>
+          </svg>
+        </div>
+        <div class="mc-text">
+          <div class="mc-title">Sobre a Trilha Animal</div>
+          <div class="mc-desc">Saiba mais sobre o aplicativo</div>
+        </div>
+        <i class="ti ti-chevron-right mc-chev"></i>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+    <div class="bnav">
+      <button class="bnav-btn on" onclick="go('menu')" aria-label="Início"><span class="bi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></span><span class="bl">Início</span></button>
+      <div class="bnav-center" onclick="go('cadastro')" aria-label="Ação rápida"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      <button class="bnav-btn" onclick="go('sobre')" aria-label="Perfil"><span class="bi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><span class="bl">Perfil</span></button>
+    </div>
+  </div>
+
+  <!-- ════ ANIMAIS ════ -->
+  <div class="screen" id="sc-animais">
+    <div class="hdr">
+      <div class="hdr-top">
+        <button class="hdr-back" onclick="go('menu')" aria-label="Voltar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+        <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><ellipse cx="18" cy="17" rx="10" ry="9" stroke="rgba(255,255,255,.7)" stroke-width="1.5" fill="none"/><line x1="12" y1="10" x2="9" y2="6" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"/><line x1="24" y1="10" x2="27" y2="6" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="hdr-title">Vacas<br>Cadastradas</div>
+    </div>
+    <div class="hdr-wave"></div>
+    <div style="flex:1;overflow-y:auto;">
+      <div class="body" style="padding-bottom:16px">
+        <button class="btn-primary" style="margin-bottom:18px" onclick="go('cadastro')">
+          <i class="ti ti-plus"></i> Nova vaca
+        </button>
+        <div class="sec-label" id="animais-count">0 animais registrados</div>
+        <div id="animais-list"></div>
+      </div>
+    </div>
+    <div class="bnav">
+      <button class="bnav-btn" onclick="go('menu')" aria-label="Início"><span class="bi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></span><span class="bl">Início</span></button>
+      <div class="bnav-center" onclick="go('cadastro')" aria-label="Ação rápida"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      <button class="bnav-btn" onclick="go('sobre')" aria-label="Perfil"><span class="bi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><span class="bl">Perfil</span></button>
+    </div>
+  </div>
+
+  <!-- ════ CADASTRO ════ -->
+  <div class="screen" id="sc-cadastro">
+    <div class="hdr">
+      <div class="hdr-top">
+        <button class="hdr-back" onclick="go('animais')" aria-label="Voltar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+        <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><ellipse cx="18" cy="17" rx="10" ry="9" stroke="rgba(255,255,255,.7)" stroke-width="1.5" fill="none"/><line x1="12" y1="10" x2="9" y2="6" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"/><line x1="24" y1="10" x2="27" y2="6" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="hdr-title">Cadastrar<br>Animal</div>
+    </div>
+    <div class="photo-zone">
+      <div class="photo-circle" onclick="document.getElementById('photo-input').click()">
+        <img id="photo-preview" class="photo-preview" alt="Foto do animal">
+        <span class="photo-icon" id="photo-icon"><svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 28 Q22 14 26 6 Q30 2 34 10 Q36 16 35 24" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M68 28 Q78 14 74 6 Q70 2 66 10 Q64 16 65 24" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M24 44 Q10 38 12 50 Q14 60 26 54" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M76 44 Q90 38 88 50 Q86 60 74 54" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M32 28 Q20 30 22 44 Q24 54 26 54 Q28 62 32 68 Q38 76 50 78 Q62 76 68 68 Q72 62 74 54 Q76 54 78 44 Q80 30 68 28 Q60 22 50 20 Q40 22 32 28 Z" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M38 68 Q50 74 62 68 Q64 62 50 60 Q36 62 38 68 Z" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M46 67 Q50 69 54 67" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
+      <span class="photo-label">Adicionar foto</span>
+      <span class="photo-cam-badge" onclick="document.getElementById('photo-input').click()"><i class="ti ti-camera"></i></span>
+      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="previewPhoto(this)">
+    </div>
+    <div class="hdr-wave"></div>
+    <div style="flex:1;overflow-y:auto;">
+      <div class="body" style="padding-bottom:20px">
+        <div class="field">
+          <div class="flabel"><i class="ti ti-hash"></i> Número do animal</div>
+          <input class="finput" type="text" placeholder="Ex.: 1234" id="f-num">
+        </div>
+        <div class="field">
+          <div class="flabel"><i class="ti ti-writing"></i> Nome</div>
+          <input class="finput" type="text" placeholder="Ex.: Mimosa" id="f-nome">
+        </div>
+        <div class="field">
+          <div class="flabel"><i class="ti ti-paw"></i> Raça</div>
+          <input class="finput" type="text" placeholder="Ex.: Holandesa" id="f-raca">
+        </div>
+        <div class="field">
+          <div class="flabel"><i class="ti ti-calendar"></i> Idade</div>
+          <input class="finput" type="text" placeholder="Ex.: 4 anos" id="f-idade">
+        </div>
+        <div class="field">
+          <div class="flabel"><i class="ti ti-droplet"></i> Produção de leite</div>
+          <input class="finput" type="text" placeholder="Ex.: 28 L/dia" id="f-leite">
+        </div>
+        <div class="field">
+          <div class="flabel"><i class="ti ti-building"></i> Fazenda</div>
+          <select class="fselect" id="f-farm">
+            <option value="">Selecione a fazenda</option>
+            <option>Fazenda São João</option>
+            <option>Fazenda Boa Vista</option>
+            <option>Fazenda Santa Clara</option>
+            <option>Fazenda Nova Esperança</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="flabel"><i class="ti ti-heart-rate-monitor"></i> Status sanitário</div>
+          <select class="fselect" id="f-status">
+            <option value="saudavel">Saudável</option>
+            <option value="suspeita">Suspeita de mastite</option>
+            <option value="tratamento">Em tratamento</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="salvarAnimal()">
+          Salvar <i class="ti ti-check" style="font-size:18px"></i>
+        </button>
+        <button class="btn-outline" onclick="go('animais')">
+          <i class="ti ti-arrow-left" style="font-size:15px"></i> Voltar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SINTOMAS ════ -->
+  <div class="screen" id="sc-sintomas">
+    <div class="hdr">
+      <div class="hdr-top">
+        <button class="hdr-back" onclick="go('menu')" aria-label="Voltar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+        <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><ellipse cx="18" cy="17" rx="10" ry="9" stroke="rgba(255,255,255,.7)" stroke-width="1.5" fill="none"/><line x1="12" y1="10" x2="9" y2="6" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"/><line x1="24" y1="10" x2="27" y2="6" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="hdr-title">Registrar<br>Sintomas</div>
+    </div>
+    <div class="hdr-wave"></div>
+    <div style="flex:1;overflow-y:auto;">
+      <div class="body">
+        <div class="field">
+          <div class="flabel"><i class="ti ti-cow"></i> Animal</div>
+          <select class="sym-animal-select" id="sint-animal"></select>
+        </div>
+        <div class="sym-intro">Selecione os sintomas observados:</div>
+
+        <div class="sym-item" data-sym="Úbere inchado" onclick="togSym(this)">
+          <div class="sym-emoji">
+            <svg viewBox="0 0 30 30" fill="none"><ellipse cx="15" cy="17" rx="10" ry="8" fill="#f9b5c8" stroke="#e8879c" stroke-width="1.3"/><ellipse cx="10.5" cy="17" rx="2.8" ry="3.5" fill="#f5a0b5"/><ellipse cx="15" cy="17" rx="2.8" ry="3.5" fill="#f5a0b5"/><ellipse cx="19.5" cy="17" rx="2.8" ry="3.5" fill="#f5a0b5"/></svg>
+          </div>
+          <span class="sym-name">Úbere inchado</span>
+          <span class="sym-check"></span>
+        </div>
+
+        <div class="sym-item" data-sym="Leite com grumos" onclick="togSym(this)">
+          <div class="sym-emoji">
+            <svg viewBox="0 0 30 30" fill="none"><path d="M15 5 Q17 11 15 16 Q13 21 15 26" stroke="#90c8e0" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="10" cy="16" r="2" fill="#90c8e0" opacity=".6"/><circle cx="20" cy="13" r="1.5" fill="#90c8e0" opacity=".5"/><ellipse cx="15" cy="26" r="3 2" fill="#90c8e0" opacity=".4"/></svg>
+          </div>
+          <span class="sym-name">Leite com grumos</span>
+          <span class="sym-check"></span>
+        </div>
+
+        <div class="sym-item" data-sym="Vermelhidão no úbere" onclick="togSym(this)">
+          <div class="sym-emoji">
+            <svg viewBox="0 0 30 30" fill="none"><ellipse cx="15" cy="17" rx="10" ry="8" fill="#ffb8b8" stroke="#e87878" stroke-width="1.3"/><ellipse cx="10.5" cy="17" rx="2.8" ry="3.5" fill="#ff9898"/><ellipse cx="15" cy="17" rx="2.8" ry="3.5" fill="#ff9898"/><ellipse cx="19.5" cy="17" rx="2.8" ry="3.5" fill="#ff9898"/></svg>
+          </div>
+          <span class="sym-name">Vermelhidão no úbere</span>
+          <span class="sym-check"></span>
+        </div>
+
+        <div class="sym-item" data-sym="Febre no animal" onclick="togSym(this)">
+          <div class="sym-emoji">
+            <svg viewBox="0 0 30 30" fill="none"><rect x="13" y="4" width="4" height="18" rx="2" fill="#e06060" stroke="#c84040" stroke-width="1"/><rect x="11" y="11" width="8" height="2" rx="1" fill="#c84040"/><path d="M15 22 L17 27 L15 25 L13 27 Z" fill="#e06060"/><circle cx="15" cy="4" r="3" fill="#e06060" stroke="#c84040" stroke-width="1"/></svg>
+          </div>
+          <span class="sym-name">Febre no animal</span>
+          <span class="sym-check"></span>
+        </div>
+
+        <div class="sym-item" data-sym="Dor durante a ordenha" onclick="togSym(this)">
+          <div class="sym-emoji">
+            <svg viewBox="0 0 30 30" fill="none"><ellipse cx="15" cy="14" rx="9" ry="8" stroke="#7aaa7a" stroke-width="1.5" fill="#c8e8c8"/><line x1="10" y1="8" x2="8" y2="5" stroke="#7aaa7a" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="8" x2="22" y2="5" stroke="#7aaa7a" stroke-width="1.5" stroke-linecap="round"/><path d="M10 21 L10 28" stroke="#7aaa7a" stroke-width="2" stroke-linecap="round"/><path d="M20 21 L20 28" stroke="#7aaa7a" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="sym-name">Dor durante a ordenha</span>
+          <span class="sym-check"></span>
+        </div>
+
+        <div class="sym-item warn" data-sym="Suspeita de Mastite" onclick="togSym(this)">
+          <div class="sym-emoji">
+            <svg viewBox="0 0 30 30" fill="none"><path d="M15 4 L28 26 H2 Z" fill="#fbbf24" stroke="#e8a020" stroke-width="1.5" stroke-linejoin="round"/><line x1="15" y1="12" x2="15" y2="20" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="23" r="1.5" fill="#1a1a1a"/></svg>
+          </div>
+          <span class="sym-name">Suspeita de Mastite</span>
+          <span class="sym-check"></span>
+        </div>
+
+        <div class="field" style="margin-top:16px">
+          <div class="flabel"><i class="ti ti-notes"></i> Observações</div>
+          <textarea class="sym-notes" id="sint-notes" rows="3" placeholder="Anotações adicionais..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px 16px 20px;flex-shrink:0">
+      <button class="btn-primary" onclick="salvarSintomas()">
+        <i class="ti ti-clipboard-list" style="font-size:18px"></i>
+        Salvar registro
+      </button>
+    </div>
+  </div>
+
+  <!-- ════ HISTÓRICO ════ -->
+  <div class="screen" id="sc-historico">
+    <div class="hdr">
+      <div class="hdr-top">
+        <button class="hdr-back" onclick="go('menu')" aria-label="Voltar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+        <i class="ti ti-history" style="font-size:22px;color:rgba(255,255,255,.75)"></i>
+      </div>
+      <div class="hdr-title">Histórico de<br>Registros</div>
+    </div>
+    <div class="hdr-wave"></div>
+    <div style="flex:1;overflow-y:auto;">
+      <div class="body" style="padding-bottom:16px">
+        <div class="sec-label" id="hist-count">0 registros</div>
+        <div id="historico-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ RELATÓRIO ════ -->
+  <div class="screen" id="sc-relatorios">
+    <div class="hdr">
+      <div class="hdr-top">
+        <button class="hdr-back" onclick="go('menu')" aria-label="Voltar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+        <button onclick="renderRelatorio()" style="background:rgba(255,255,255,.12);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Atualizar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+      </div>
+      <div class="hdr-title">Relatório<br>Sanitário</div>
+    </div>
+    <div class="hdr-wave"></div>
+    <div style="flex:1;overflow-y:auto;">
+      <div class="body" style="padding-bottom:20px">
+        <select class="filter-sel" id="rel-filter" onchange="renderRelatorio()">
+          <option value="">Todos os animais</option>
+        </select>
+
+        <div class="stat-card sc-green">
+          <div class="sc-left">
+            <div class="sc-icon">
+              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="17" fill="#2d6647" opacity=".15"/><circle cx="20" cy="20" r="13" fill="#2d6647"/><path d="M13 20 L17 24 L27 15" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div><div class="sc-label">Vacas saudáveis</div><div class="sc-num" id="rel-saudaveis">0</div></div>
+          </div>
+          <div class="sc-trend"><svg viewBox="0 0 68 40" fill="none"><polyline points="2,34 18,26 34,20 50,13 66,6" stroke="#2d6647" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="66" cy="6" r="4" fill="#2d6647"/></svg></div>
+        </div>
+
+        <div class="stat-card sc-amber">
+          <div class="sc-left">
+            <div class="sc-icon">
+              <svg viewBox="0 0 40 40" fill="none"><path d="M20 4 L37 34 H3 Z" fill="#fbbf24" opacity=".2"/><path d="M20 4 L37 34 H3 Z" stroke="#e8a020" stroke-width="2" stroke-linejoin="round" fill="none"/><line x1="20" y1="16" x2="20" y2="25" stroke="#e8a020" stroke-width="2.5" stroke-linecap="round"/><circle cx="20" cy="29" r="2" fill="#e8a020"/></svg>
+            </div>
+            <div><div class="sc-label">Suspeita de mastite</div><div class="sc-num" id="rel-suspeitas">0</div></div>
+          </div>
+          <div class="sc-trend"><svg viewBox="0 0 68 40" fill="none"><polyline points="2,10 18,16 34,20 50,17 66,22" stroke="#e8a020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="66" cy="22" r="4" fill="#e8a020"/></svg></div>
+        </div>
+
+        <div class="stat-card sc-red">
+          <div class="sc-left">
+            <div class="sc-icon">
+              <svg viewBox="0 0 40 40" fill="none"><rect x="12" y="9" width="16" height="22" rx="4" stroke="#d94040" stroke-width="2" fill="none"/><line x1="17" y1="16" x2="23" y2="16" stroke="#d94040" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="13" x2="20" y2="19" stroke="#d94040" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="22" x2="24" y2="22" stroke="#d94040" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="26" x2="22" y2="26" stroke="#d94040" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div><div class="sc-label">Em tratamento</div><div class="sc-num" id="rel-tratamento">0</div></div>
+          </div>
+          <div class="sc-trend"><svg viewBox="0 0 68 40" fill="none"><polyline points="2,8 18,13 34,11 50,22 66,28" stroke="#d94040" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="66" cy="28" r="4" fill="#d94040"/></svg></div>
+        </div>
+
+        <div style="margin-top:8px;padding:16px;background:#fff;border-radius:var(--radius);border:1px solid var(--border)">
+          <div class="sec-label" style="margin-bottom:12px">Total de registros de sintomas</div>
+          <div id="rel-sintomas-total" style="font-size:36px;font-weight:900;color:var(--g7)">0</div>
+          <div style="font-size:13px;color:var(--txt2);margin-top:4px">registros salvos no sistema</div>
+        </div>
+
+        <div id="rel-debug" style="margin-top:12px;padding:12px 14px;background:rgba(26,53,40,.06);border-radius:12px;font-size:12px;color:var(--txt2);display:none;"></div>
+
+        <button class="btn-primary" style="margin-top:16px" onclick="recalcularTodos()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Recalcular status de todos os animais
+        </button>
+
+        <button class="btn-outline" style="margin-top:10px" onclick="go('menu')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          Voltar ao menu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SOBRE ════ -->
+  <div class="screen" id="sc-sobre">
+    <div class="hdr">
+      <div class="hdr-top">
+        <button class="hdr-back" onclick="go('menu')" aria-label="Voltar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+      </div>
+      <div class="hdr-title">Sobre a<br>Trilha Animal</div>
+    </div>
+    <div class="hdr-wave"></div>
+    <div style="flex:1;overflow-y:auto;">
+      <div class="about-logo">
+        <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Trilha Animal">
+          <circle cx="70" cy="70" r="66" fill="none" stroke="#2d6647" stroke-width="2.5" stroke-dasharray="6 4"/>
+          <circle cx="70" cy="70" r="56" fill="#edf8f1" stroke="#2d6647" stroke-width="1.5"/>
+          <g transform="translate(70,30)">
+            <ellipse cx="0" cy="0" rx="15" ry="10" fill="#c8e8c8" stroke="#2d6647" stroke-width="1.2"/>
+            <line x1="-10" y1="-1" x2="-15" y2="-8" stroke="#2d6647" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="10" y1="-1" x2="15" y2="-8" stroke="#2d6647" stroke-width="1.5" stroke-linecap="round"/>
+            <ellipse cx="-4" cy="4" rx="3.5" ry="4.5" fill="#a0c8a8" stroke="#2d6647" stroke-width="1"/>
+            <ellipse cx="4" cy="4" rx="3.5" ry="4.5" fill="#a0c8a8" stroke="#2d6647" stroke-width="1"/>
+            <ellipse cx="0" cy="9" rx="5.5" ry="2.8" fill="#f9b5c8" stroke="#2d6647" stroke-width=".8"/>
+          </g>
+          <text x="70" y="86" text-anchor="middle" font-family="Nunito,sans-serif" font-size="20" font-weight="900" fill="#1a3528" letter-spacing="2.5">TRILHA</text>
+          <text x="70" y="99" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10" font-weight="800" fill="#1a3528" letter-spacing="3.5">ANIMAL</text>
+          <text x="70" y="114" text-anchor="middle" font-family="Nunito,sans-serif" font-size="6" font-weight="600" fill="#5a7266" letter-spacing=".7">PREVENÇÃO QUE FORTALECE O REBANHO</text>
+          <path d="M14 122 Q70 130 126 122" stroke="#2d6647" stroke-width="1.2" fill="none"/>
+          <path d="M14 122 Q70 136 126 122" stroke="#2d6647" stroke-width=".5" fill="none" opacity=".4"/>
+          <circle cx="14" cy="122" r="2.5" fill="#2d6647" opacity=".3"/>
+          <circle cx="126" cy="122" r="2.5" fill="#2d6647" opacity=".3"/>
+        </svg>
+      </div>
+      <div class="about-body" style="padding:0 16px 24px">
+        <p>O aplicativo <strong style="color:var(--txt);font-weight:800">Trilha Animal – Controle de Mastite</strong> foi criado para ajudar funcionários no monitoramento das vacas, permitindo registrar sintomas, acompanhar a saúde dos animais e identificar possíveis casos de mastite.</p>
+        <p>Com o uso do sistema, é possível melhorar a qualidade do leite, reduzir prejuízos e facilitar o manejo dentro da propriedade rural.</p>
+        <div class="about-tech">
+          <div class="about-tech-title">Informações técnicas</div>
+          <div class="about-tech-row"><b>Versão:</b> v1.0.0 — MVP Demonstrativo</div>
+          <div class="about-tech-row"><b>Front-end:</b> React · TypeScript · TailwindCSS</div>
+          <div class="about-tech-row"><b>Back-end:</b> .NET 8 · Clean Architecture · CQRS</div>
+          <div class="about-tech-row"><b>Armazenamento:</b> localStorage (dados persistentes)</div>
+        </div>
+        <button class="btn-outline" style="margin-top:20px" onclick="go('menu')">
+          <i class="ti ti-arrow-left" style="font-size:15px"></i> Voltar ao menu
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════ MODAL EDITAR ANIMAL ════ -->
+<div class="modal-overlay" id="modal-editar">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">Editar Animal</span>
+      <button class="modal-close" onclick="fecharModal()" aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="edit-photo-zone">
+        <div class="edit-photo-circle" onclick="document.getElementById('edit-photo-input').click()" id="edit-photo-circle">
+          <img id="edit-photo-preview" alt="Foto do animal">
+          <span id="edit-photo-icon" style="display:flex;align-items:center;justify-content:center"><svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 28 Q22 14 26 6 Q30 2 34 10 Q36 16 35 24" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M68 28 Q78 14 74 6 Q70 2 66 10 Q64 16 65 24" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M24 44 Q10 38 12 50 Q14 60 26 54" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M76 44 Q90 38 88 50 Q86 60 74 54" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M32 28 Q20 30 22 44 Q24 54 26 54 Q28 62 32 68 Q38 76 50 78 Q62 76 68 68 Q72 62 74 54 Q76 54 78 44 Q80 30 68 28 Q60 22 50 20 Q40 22 32 28 Z" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M38 68 Q50 74 62 68 Q64 62 50 60 Q36 62 38 68 Z" stroke="#2d6647" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M46 67 Q50 69 54 67" stroke="#2d6647" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg></span>
+        </div>
+        <div class="edit-photo-info">
+          <p>Foto do animal</p>
+          <button class="edit-photo-btn" onclick="document.getElementById('edit-photo-input').click()">
+            <i class="ti ti-camera" style="margin-right:4px"></i>Alterar foto
+          </button>
+        </div>
+        <input type="file" id="edit-photo-input" accept="image/*" style="display:none" onchange="previewEditPhoto(this)">
+      </div>
+      <div class="field">
+        <div class="flabel"><i class="ti ti-hash"></i> Número do animal</div>
+        <input class="finput" type="text" id="edit-num" placeholder="Ex.: 1234">
+      </div>
+      <div class="field">
+        <div class="flabel"><i class="ti ti-writing"></i> Nome</div>
+        <input class="finput" type="text" id="edit-nome" placeholder="Ex.: Mimosa">
+      </div>
+      <div class="field">
+        <div class="flabel"><i class="ti ti-paw"></i> Raça</div>
+        <input class="finput" type="text" id="edit-raca" placeholder="Ex.: Holandesa">
+      </div>
+      <div class="field">
+        <div class="flabel"><i class="ti ti-calendar"></i> Idade</div>
+        <input class="finput" type="text" id="edit-idade" placeholder="Ex.: 4 anos">
+      </div>
+      <div class="field">
+        <div class="flabel"><i class="ti ti-droplet"></i> Produção de leite</div>
+        <input class="finput" type="text" id="edit-leite" placeholder="Ex.: 28 L/dia">
+      </div>
+      <div class="field">
+        <div class="flabel"><i class="ti ti-building"></i> Fazenda</div>
+        <select class="fselect" id="edit-farm">
+          <option value="">Selecione a fazenda</option>
+          <option>Fazenda São João</option>
+          <option>Fazenda Boa Vista</option>
+          <option>Fazenda Santa Clara</option>
+          <option>Fazenda Nova Esperança</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="flabel"><i class="ti ti-heart-rate-monitor"></i> Status sanitário</div>
+        <select class="fselect" id="edit-status">
+          <option value="saudavel">Saudável</option>
+          <option value="suspeita">Suspeita de mastite</option>
+          <option value="tratamento">Em tratamento</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="salvarEdicao()">
+        <i class="ti ti-device-floppy" style="font-size:18px"></i> Salvar alterações
+      </button>
+      <button class="btn-outline" onclick="fecharModal()" style="margin-top:8px">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="ti ti-check" style="font-size:16px"></i><span id="tmsg">Salvo!</span></div>
+
+<script>
+// ─── STORAGE ───────────────────────────────────────────────
+const DB = {
+  getAnimais: () => JSON.parse(localStorage.getItem('ta_animais') || '[]'),
+  setAnimais: (d) => localStorage.setItem('ta_animais', JSON.stringify(d)),
+  getSintomas: () => JSON.parse(localStorage.getItem('ta_sintomas') || '[]'),
+  setSintomas: (d) => localStorage.setItem('ta_sintomas', JSON.stringify(d)),
+};
+
+// ─── NAV ───────────────────────────────────────────────────
+function go(s) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('sc-' + s);
+  if (el) { el.classList.add('active'); el.scrollTop = 0; }
+  if (s === 'menu') renderMenuStats();
+  if (s === 'animais') renderAnimais();
+  if (s === 'sintomas') renderSintSelect();
+  if (s === 'historico') renderHistorico();
+  // Defer relatorio render para garantir que o DOM esteja visível
+  if (s === 'relatorios') requestAnimationFrame(() => renderRelatorio());
+}
+
+// ─── TOAST ─────────────────────────────────────────────────
+function toast(msg, icon = 'ti-check') {
+  const t = document.getElementById('toast');
+  t.querySelector('i').className = 'ti ' + icon + ' ';
+  t.querySelector('i').style.fontSize = '16px';
+  document.getElementById('tmsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── FOTO ──────────────────────────────────────────────────
+let photoDataUrl = '';
+function previewPhoto(input) {
+  if (!input.files.length) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    photoDataUrl = e.target.result;
+    document.getElementById('photo-preview').src = photoDataUrl;
+    document.getElementById('photo-preview').style.display = 'block';
+    document.getElementById('photo-icon').style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ─── SINTOMAS TOGGLE ───────────────────────────────────────
+function togSym(el) {
+  el.classList.toggle('sel');
+  const box = el.querySelector('.sym-check');
+  if (el.classList.contains('sel')) {
+    box.textContent = '✓';
+    box.style.cssText = el.classList.contains('warn')
+      ? 'background:var(--amber);border-color:var(--amber);color:#fff'
+      : 'background:var(--g6);border-color:var(--g6);color:#fff';
+  } else {
+    box.textContent = '';
+    box.style.cssText = '';
+  }
+}
+
+// ─── RENDER SELECT ANIMAIS ─────────────────────────────────
+function renderSintSelect() {
+  const sel = document.getElementById('sint-animal');
+  const animais = DB.getAnimais();
+  if (!animais.length) {
+    sel.innerHTML = '<option value="">— Nenhum animal cadastrado —</option>';
+  } else {
+    sel.innerHTML = animais.map(a => `<option value="${a.id}">#${a.num} · ${a.nome || 'Sem nome'}</option>`).join('');
+  }
+  document.querySelectorAll('#sc-sintomas .sym-item').forEach(el => {
+    el.classList.remove('sel');
+    const box = el.querySelector('.sym-check');
+    box.textContent = '';
+    box.style.cssText = '';
+  });
+  document.getElementById('sint-notes').value = '';
+}
+
+// ─── SALVAR ANIMAL ─────────────────────────────────────────
+function salvarAnimal() {
+  const num = document.getElementById('f-num').value.trim();
+  const nome = document.getElementById('f-nome').value.trim();
+  if (!num) { toast('Informe o número do animal', 'ti-alert-circle'); return; }
+  const animais = DB.getAnimais();
+  const animal = {
+    id: Date.now().toString(),
+    num, nome,
+    raca: document.getElementById('f-raca').value.trim(),
+    idade: document.getElementById('f-idade').value.trim(),
+    leite: document.getElementById('f-leite').value.trim(),
+    farm: document.getElementById('f-farm').value,
+    status: document.getElementById('f-status').value,
+    foto: photoDataUrl,
+    criadoEm: new Date().toLocaleDateString('pt-BR'),
+  };
+  animais.push(animal);
+  DB.setAnimais(animais);
+  ['f-num','f-nome','f-raca','f-idade','f-leite'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-farm').value = '';
+  document.getElementById('f-status').value = 'saudavel';
+  document.getElementById('photo-preview').style.display = 'none';
+  document.getElementById('photo-icon').style.display = 'block';
+  document.getElementById('photo-input').value = '';
+  photoDataUrl = '';
+  toast('Animal cadastrado com sucesso!');
+  go('animais');
+}
+
+// ─── REMOVER ANIMAL ────────────────────────────────────────
+function removerAnimal(id) {
+  if (!confirm('Remover este animal?')) return;
+  let animais = DB.getAnimais().filter(a => a.id !== id);
+  DB.setAnimais(animais);
+  let sints = DB.getSintomas().filter(s => s.animalId !== id);
+  DB.setSintomas(sints);
+  toast('Animal removido', 'ti-trash');
+  renderAnimais();
+}
+
+// ─── RENDER ANIMAIS ────────────────────────────────────────
+const badgeMap = { saudavel: ['b-ok','Saudável'], suspeita: ['b-sus','Suspeita'], tratamento: ['b-trt','Tratamento'] };
+function renderAnimais() {
+  const animais = DB.getAnimais();
+  const count = document.getElementById('animais-count');
+  const list = document.getElementById('animais-list');
+  count.textContent = animais.length + (animais.length === 1 ? ' animal registrado' : ' animais registrados');
+  if (!animais.length) {
+    list.innerHTML = '<div class="empty-state"><i class="ti ti-cow"></i><p>Nenhum animal cadastrado ainda.<br>Clique em "Nova vaca" para adicionar.</p></div>';
+    return;
+  }
+  list.innerHTML = animais.map(a => {
+    const [bc, bl] = badgeMap[a.status] || ['b-ok','Saudável'];
+    const avatar = a.foto
+      ? `<img src="${a.foto}" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`
+      : `<svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 28 Q22 14 26 6 Q30 2 34 10 Q36 16 35 24" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M68 28 Q78 14 74 6 Q70 2 66 10 Q64 16 65 24" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M24 44 Q10 38 12 50 Q14 60 26 54" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M76 44 Q90 38 88 50 Q86 60 74 54" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M32 28 Q20 30 22 44 Q24 54 26 54 Q28 62 32 68 Q38 76 50 78 Q62 76 68 68 Q72 62 74 54 Q76 54 78 44 Q80 30 68 28 Q60 22 50 20 Q40 22 32 28 Z" stroke="#2d6647" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M38 68 Q50 74 62 68 Q64 62 50 60 Q36 62 38 68 Z" stroke="#2d6647" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M46 67 Q50 69 54 67" stroke="#2d6647" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>`
+    return `
+    <div class="anim-card">
+      <div class="anim-avatar">${avatar}</div>
+      <div class="anim-info">
+        <div class="anim-name">${a.nome || 'Sem nome'} · #${a.num}</div>
+        <div class="anim-detail">${[a.raca, a.idade, a.leite, a.farm].filter(Boolean).join(' · ') || '—'}</div>
+      </div>
+      <div class="anim-actions" style="flex-direction:column;align-items:flex-end;gap:6px">
+        <span class="badge ${bc}">${bl}</span>
+        <div style="display:flex;gap:6px">
+          <button class="btn-icon btn-edit" onclick="abrirEdicao('${a.id}')" aria-label="Editar animal">
+            <i class="ti ti-pencil"></i>
+          </button>
+          <button class="btn-icon btn-del" onclick="removerAnimal('${a.id}')" aria-label="Remover animal">
+            <i class="ti ti-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── SALVAR SINTOMAS ───────────────────────────────────────
+function salvarSintomas() {
+  const animalSel = document.getElementById('sint-animal');
+  if (!animalSel.value) { toast('Cadastre um animal primeiro', 'ti-alert-circle'); return; }
+
+  const syms = [];
+  document.querySelectorAll('#sc-sintomas .sym-item.sel').forEach(el => syms.push(el.dataset.sym));
+  if (!syms.length) { toast('Selecione ao menos um sintoma', 'ti-alert-circle'); return; }
+
+  const animalId = animalSel.value;
+
+  // ── Grava o registro de sintoma ──────────────────────────
+  const sints = DB.getSintomas();
+  sints.push({
+    id: Date.now().toString(),
+    animalId,
+    animalLabel: animalSel.options[animalSel.selectedIndex].text,
+    sintomas: syms,
+    notes: document.getElementById('sint-notes').value.trim(),
+    data: new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+  });
+  DB.setSintomas(sints);
+
+  // ── Atualiza status do animal baseado nos sintomas ───────
+  // Regra: "Suspeita de Mastite" selecionado → status = suspeita
+  //        Qualquer outro sintoma sem suspeita → status = tratamento (em observação)
+  //        Sem nenhum sintoma grave → mantém status atual
+  const temMastite = syms.includes('Suspeita de Mastite');
+  const animais = DB.getAnimais();
+  const idx = animais.findIndex(a => a.id === animalId);
+  if (idx !== -1) {
+    const novoStatus = temMastite ? 'suspeita' : 'tratamento';
+    // Só atualiza se o animal estava saudável ou se agora é suspeita
+    // Nunca regride de suspeita para tratamento automaticamente
+    const statusAtual = animais[idx].status;
+    if (statusAtual === 'saudavel' || temMastite) {
+      animais[idx].status = novoStatus;
+      DB.setAnimais(animais);
+    }
+  }
+
+  toast('Registro salvo e status do animal atualizado!');
+  go('historico');
+}
+
+// ─── REMOVER SINTOMA ───────────────────────────────────────
+function removerSintoma(id) {
+  if (!confirm('Remover este registro?')) return;
+
+  // Descobre a qual animal este registro pertence antes de remover
+  const registro = DB.getSintomas().find(s => s.id === id);
+  const animalId = registro ? registro.animalId : null;
+
+  // Remove o registro
+  const restantes = DB.getSintomas().filter(s => s.id !== id);
+  DB.setSintomas(restantes);
+
+  // Recalcula status do animal com base nos registros restantes
+  if (animalId) {
+    recalcularStatusAnimal(animalId, restantes);
+  }
+
+  toast('Registro removido', 'ti-trash');
+  renderHistorico();
+}
+
+// ─── RECALCULAR STATUS DO ANIMAL ───────────────────────────
+// Olha todos os registros de sintoma do animal e decide o status correto
+function recalcularStatusAnimal(animalId, todosRegistros) {
+  const registrosDoAnimal = (todosRegistros || DB.getSintomas())
+    .filter(s => s.animalId === animalId);
+
+  const animais = DB.getAnimais();
+  const idx = animais.findIndex(a => a.id === animalId);
+  if (idx === -1) return;
+
+  let novoStatus;
+  if (registrosDoAnimal.length === 0) {
+    // Sem nenhum registro → saudável
+    novoStatus = 'saudavel';
+  } else {
+    // Tem algum registro com Suspeita de Mastite?
+    const temMastite = registrosDoAnimal.some(r =>
+      r.sintomas && r.sintomas.includes('Suspeita de Mastite')
+    );
+    novoStatus = temMastite ? 'suspeita' : 'tratamento';
+  }
+
+  animais[idx].status = novoStatus;
+  DB.setAnimais(animais);
+}
+
+// ─── RENDER HISTÓRICO ──────────────────────────────────────
+function renderHistorico() {
+  const sints = DB.getSintomas().slice().reverse();
+  document.getElementById('hist-count').textContent = sints.length + (sints.length === 1 ? ' registro' : ' registros');
+  const list = document.getElementById('historico-list');
+  if (!sints.length) {
+    list.innerHTML = '<div class="empty-state"><i class="ti ti-clipboard-list"></i><p>Nenhum registro de sintomas ainda.</p></div>';
+    return;
+  }
+  list.innerHTML = sints.map(s => {
+    const tags = s.sintomas.map(sym => {
+      const isWarn = sym === 'Suspeita de Mastite';
+      return `<span class="sint-tag ${isWarn ? 'warn-tag' : ''}">${sym}</span>`;
+    }).join('');
+    return `
+    <div class="sint-card">
+      <div class="sint-header">
+        <div class="sint-animal"><i class="ti ti-cow" style="color:var(--g5);margin-right:4px"></i>${s.animalLabel}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="sint-date">${s.data}</span>
+          <button class="btn-icon btn-del" onclick="removerSintoma('${s.id}')" aria-label="Remover registro">
+            <i class="ti ti-trash"></i>
+          </button>
+        </div>
+      </div>
+      <div class="sint-tags">${tags}</div>
+      ${s.notes ? `<div class="sint-notes">"${s.notes}"</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ─── RENDER RELATÓRIO ──────────────────────────────────────
+function renderRelatorio() {
+  // Lê SEMPRE direto do localStorage — sem cache, sem estado intermediário
+  const animais = DB.getAnimais();
+  const sel = document.getElementById('rel-filter');
+
+  // Guarda filtro atual antes de qualquer manipulação
+  const currentFilter = sel ? sel.value : '';
+
+  // Reconstrói opções de fazenda
+  const farms = [...new Set(animais.map(a => a.farm).filter(Boolean))];
+  if (sel) {
+    sel.innerHTML = '<option value="">Todos os animais</option>' +
+      farms.map(f => `<option value="${f}">${f}</option>`).join('');
+    // Restaura seleção
+    if (currentFilter && farms.includes(currentFilter)) {
+      sel.value = currentFilter;
+    } else {
+      sel.value = '';
+    }
+  }
+
+  // Filtra animais pelo valor atual do select (lê de novo para garantir)
+  const activeFilter = sel ? sel.value : '';
+  const filtered = activeFilter ? animais.filter(a => a.farm === activeFilter) : animais;
+
+  // Normaliza status para evitar problemas de espaço/case/acento
+  const norm = s => (s || '').trim().toLowerCase();
+
+  const countSaudavel   = filtered.filter(a => norm(a.status) === 'saudavel').length;
+  const countSuspeita   = filtered.filter(a => norm(a.status) === 'suspeita').length;
+  const countTratamento = filtered.filter(a => norm(a.status) === 'tratamento').length;
+
+  document.getElementById('rel-saudaveis').textContent  = countSaudavel;
+  document.getElementById('rel-suspeitas').textContent  = countSuspeita;
+  document.getElementById('rel-tratamento').textContent = countTratamento;
+
+  const filteredIds = new Set(filtered.map(a => a.id));
+  const sintTotal = DB.getSintomas().filter(s => filteredIds.has(s.animalId)).length;
+  document.getElementById('rel-sintomas-total').textContent = sintTotal;
+
+  // Diagnóstico — mostra valores reais do localStorage para depuração
+  const dbg = document.getElementById('rel-debug');
+  if (dbg) {
+    const allStatus = filtered.map(a => `#${a.num}=${norm(a.status)}`).join(', ');
+    if (filtered.length > 0 && (countSaudavel + countSuspeita + countTratamento) < filtered.length) {
+      // Status inesperado — mostra diagnóstico
+      dbg.style.display = 'block';
+      dbg.innerHTML = '<strong>Diagnóstico:</strong> ' + allStatus;
+    } else {
+      dbg.style.display = 'none';
+    }
+  }
+}
+
+// ─── MENU STATS ────────────────────────────────────────────
+function renderMenuStats() {
+  const animais = DB.getAnimais();
+  const sints = DB.getSintomas();
+  document.getElementById('menu-stats-label').textContent =
+    `${animais.length} animais · ${sints.length} registros de sintomas`;
+}
+
+
+// ─── EDITAR ANIMAL — MODAL ─────────────────────────────────
+let editingId = null;
+let editPhotoDataUrl = '';
+
+function abrirEdicao(id) {
+  const animais = DB.getAnimais();
+  const a = animais.find(x => x.id === id);
+  if (!a) return;
+  editingId = id;
+  editPhotoDataUrl = a.foto || '';
+
+  document.getElementById('edit-num').value   = a.num    || '';
+  document.getElementById('edit-nome').value  = a.nome   || '';
+  document.getElementById('edit-raca').value  = a.raca   || '';
+  document.getElementById('edit-idade').value = a.idade  || '';
+  document.getElementById('edit-leite').value = a.leite  || '';
+  document.getElementById('edit-farm').value  = a.farm   || '';
+  document.getElementById('edit-status').value = a.status || 'saudavel';
+
+  const preview = document.getElementById('edit-photo-preview');
+  const icon    = document.getElementById('edit-photo-icon');
+  if (a.foto) {
+    preview.src = a.foto;
+    preview.style.display = 'block';
+    icon.style.display = 'none';
+  } else {
+    preview.src = '';
+    preview.style.display = 'none';
+    icon.style.display = 'block';
+  }
+  document.getElementById('edit-photo-input').value = '';
+  document.getElementById('modal-editar').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModal() {
+  document.getElementById('modal-editar').classList.remove('open');
+  document.body.style.overflow = '';
+  editingId = null;
+  editPhotoDataUrl = '';
+}
+
+document.getElementById('modal-editar').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+
+function previewEditPhoto(input) {
+  if (!input.files.length) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    editPhotoDataUrl = e.target.result;
+    const preview = document.getElementById('edit-photo-preview');
+    preview.src = editPhotoDataUrl;
+    preview.style.display = 'block';
+    document.getElementById('edit-photo-icon').style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function salvarEdicao() {
+  if (!editingId) return;
+  const num = document.getElementById('edit-num').value.trim();
+  if (!num) { toast('Informe o número do animal', 'ti-alert-circle'); return; }
+
+  const animais = DB.getAnimais();
+  const idx = animais.findIndex(a => a.id === editingId);
+  if (idx === -1) return;
+
+  const nome = document.getElementById('edit-nome').value.trim();
+  animais[idx] = {
+    ...animais[idx],
+    num,
+    nome,
+    raca:      document.getElementById('edit-raca').value.trim(),
+    idade:     document.getElementById('edit-idade').value.trim(),
+    leite:     document.getElementById('edit-leite').value.trim(),
+    farm:      document.getElementById('edit-farm').value,
+    status:    document.getElementById('edit-status').value,
+    foto:      editPhotoDataUrl,
+    editadoEm: new Date().toLocaleDateString('pt-BR'),
+  };
+
+  // Atualiza label nos registros de sintomas vinculados
+  const novoLabel = '#' + num + ' · ' + (nome || 'Sem nome');
+  const sints = DB.getSintomas().map(s =>
+    s.animalId === editingId ? { ...s, animalLabel: novoLabel } : s
+  );
+  DB.setSintomas(sints);
+  DB.setAnimais(animais);
+
+  fecharModal();
+  toast('Animal atualizado com sucesso!', 'ti-check');
+  renderAnimais();
+  renderMenuStats();
+}
+
+// ─── RECALCULAR TODOS OS ANIMAIS ───────────────────────────
+function recalcularTodos() {
+  const animais = DB.getAnimais();
+  const sints = DB.getSintomas();
+
+  animais.forEach((a, idx) => {
+    const registros = sints.filter(s => s.animalId === a.id);
+    let novoStatus;
+    if (registros.length === 0) {
+      novoStatus = 'saudavel';
+    } else {
+      const temMastite = registros.some(r =>
+        r.sintomas && r.sintomas.includes('Suspeita de Mastite')
+      );
+      novoStatus = temMastite ? 'suspeita' : 'tratamento';
+    }
+    animais[idx].status = novoStatus;
+  });
+
+  DB.setAnimais(animais);
+  renderRelatorio();
+  toast('Status de todos os animais recalculado!', 'ti-check');
+}
+
+// ─── INIT ──────────────────────────────────────────────────
+renderMenuStats();
+</script>
+</body>
+</html>
