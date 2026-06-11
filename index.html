@@ -1175,26 +1175,30 @@ body {
 <div class="toast" id="toast"><i class="ti ti-check" style="font-size:16px"></i><span id="tmsg">Salvo!</span></div>
 
 <script>
-// ─── STORAGE (JSONBin.io — compartilhado entre dispositivos) ─
+// ─── STORAGE ────────────────────────────────────────────────
 const JSONBIN_KEY = '$2a$10$tQlVGd3YzURmspLpPEWflO3GH3QVptPYQ0L3XmsNJpzT8E9poP4O6';
-const JSONBIN_ID  = '6a2a21b7da38895dfeaac03f'; // ← substitua pelo Bin ID criado no JSONBin
+const JSONBIN_ID  = '6a2a21b7da38895dfeaac03f';
+const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_ID;
 
-let _cache = null;
-let _saving = false;
-let _pendingSave = false;
+// _cache começa com estrutura vazia — nunca fica null
+let _cache = { animais: [], sintomas: [] };
+let _useRemote = true;  // vira false se JSONBin falhar
+let _saveTimer = null;
 
 async function dbInit() {
-  if (_cache) return;
   try {
-    const r = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+    const r = await fetch(JSONBIN_URL + '/latest', {
       headers: { 'X-Master-Key': JSONBIN_KEY }
     });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     const j = await r.json();
-    _cache = j.record;
-    if (!_cache.animais)  _cache.animais  = [];
-    if (!_cache.sintomas) _cache.sintomas = [];
+    _cache = j.record || { animais: [], sintomas: [] };
+    if (!Array.isArray(_cache.animais))  _cache.animais  = [];
+    if (!Array.isArray(_cache.sintomas)) _cache.sintomas = [];
+    console.log('JSONBin carregado:', _cache.animais.length, 'animais');
   } catch(e) {
-    console.warn('JSONBin falhou, usando localStorage como fallback:', e);
+    console.warn('JSONBin indisponível, usando localStorage:', e.message);
+    _useRemote = false;
     _cache = {
       animais:  JSON.parse(localStorage.getItem('ta_animais')  || '[]'),
       sintomas: JSON.parse(localStorage.getItem('ta_sintomas') || '[]'),
@@ -1202,30 +1206,33 @@ async function dbInit() {
   }
 }
 
-async function _flush() {
-  if (_saving) { _pendingSave = true; return; }
-  _saving = true;
-  try {
-    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
-      body: JSON.stringify(_cache)
-    });
-  } catch(e) {
-    // fallback local
+function _flush() {
+  // Debounce: espera 600ms após última alteração para salvar
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(async () => {
+    // Sempre salva local como backup
     localStorage.setItem('ta_animais',  JSON.stringify(_cache.animais));
     localStorage.setItem('ta_sintomas', JSON.stringify(_cache.sintomas));
-    console.warn('Salvo localmente (JSONBin indisponível)');
-  }
-  _saving = false;
-  if (_pendingSave) { _pendingSave = false; _flush(); }
+    if (!_useRemote) return;
+    try {
+      const r = await fetch(JSONBIN_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+        body: JSON.stringify(_cache)
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      console.log('Salvo no JSONBin');
+    } catch(e) {
+      console.warn('Erro ao salvar no JSONBin:', e.message);
+    }
+  }, 600);
 }
 
 const DB = {
-  getAnimais:  () => (_cache ? _cache.animais  : []),
-  getSintomas: () => (_cache ? _cache.sintomas : []),
-  setAnimais:  (d) => { if (_cache) { _cache.animais  = d; _flush(); } },
-  setSintomas: (d) => { if (_cache) { _cache.sintomas = d; _flush(); } },
+  getAnimais:  () => _cache.animais,
+  getSintomas: () => _cache.sintomas,
+  setAnimais:  (d) => { _cache.animais  = d; _flush(); },
+  setSintomas: (d) => { _cache.sintomas = d; _flush(); },
 };
 
 // ─── NAV ───────────────────────────────────────────────────
